@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/he/1.2.0/he.min.js"></script>
+
+<body>
+    <div id="div-id"></div>
+    <script id="script-id"></script>
+</body>
+
+
+<script type="text/javascript">
+    // removes the outer html tags of a string -- EX: "<div> <p>text</p> </div>"" --> "<p>text</p>"
+    function removeOuterTags(string){
+        var frontGt = string.indexOf('>');
+        reversedString = string.split("").reverse().join("");
+        var backLt = string.length-(reversedString.indexOf('<')+1);
+
+        newString = string.substring(frontGt+1, backLt).trim();
+        return newString;
+    }
+
+    window.addEventListener('load', function () {
+        // loads the graph; decodes using the he library
+        var graph = ('{{ item_text }}');
+        graphDec = he.decode(graph);
+
+        // removes the outer div tags
+        graphDecTrim = removeOuterTags(graphDec); 
+
+        // isolates the graph div using regex
+        graphDiv = graphDecTrim.match(/<div(.*)>(.*)<\/div>/g)[0]; 
+
+        // isolates the graph script using regex, then removes the script tags
+        graphScript = graphDecTrim.match(/<script(.*)>(.*)<\/script>/g)[0];
+        graphScript = removeOuterTags(graphScript);
+
+        // attaches the separate div and script to predefined html elements -- can also be changed to create new html elements instead
+        document.getElementById("div-id").innerHTML = graphDiv;
+        document.getElementById("script-id").innerHTML = graphScript;
+    });
+</script>
+
+</html>
